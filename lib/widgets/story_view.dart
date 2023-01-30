@@ -779,6 +779,7 @@ class PageBarState extends State<PageBar> {
               isPlaying(it) ? widget.animation!.value : (it.shown ? 1 : 0),
               indicatorHeight: widget.indicatorHeight == IndicatorHeight.large ? 5 : 3,
               indicatorColor: widget.indicatorColor,
+              backIndicatorColor: widget.secondIndicatorColor,
             ),
           ),
         );
