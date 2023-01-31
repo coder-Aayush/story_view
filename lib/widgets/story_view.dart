@@ -408,6 +408,13 @@ class StoryView extends StatefulWidget {
 
   final Color? secondIndicatorColor;
 
+
+
+  /// widget to place below the progress bar
+  /// edited for own needs.
+  /// 
+  final Widget child;
+
   StoryView({
     required this.storyItems,
     required this.controller,
@@ -419,6 +426,7 @@ class StoryView extends StatefulWidget {
     this.onVerticalSwipeComplete,
     this.indicatorColor = Colors.white,
     this.secondIndicatorColor,
+    required this.child,
   });
 
   @override
@@ -635,6 +643,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                     widget.storyItems.map((it) => PageData(it!.duration, it.shown)).toList(),
                     this._currentAnimation,
                     key: UniqueKey(),
+                    child: widget.child,
                     indicatorHeight: widget.inline ? IndicatorHeight.small : IndicatorHeight.large,
                     indicatorColor: widget.indicatorColor,
                     secondIndicatorColor: widget.secondIndicatorColor,
@@ -726,6 +735,7 @@ class PageBar extends StatefulWidget {
   final IndicatorHeight indicatorHeight;
   final Color indicatorColor;
   final Color? secondIndicatorColor;
+  final Widget child;
 
   PageBar(
     this.pages,
@@ -734,6 +744,7 @@ class PageBar extends StatefulWidget {
     this.indicatorColor = Colors.white,
     this.secondIndicatorColor,
     Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override
@@ -776,6 +787,7 @@ class PageBarState extends State<PageBar> {
           child: Container(
             padding: EdgeInsets.only(right: widget.pages.last == it ? 0 : this.spacing),
             child: StoryProgressIndicator(
+              child: widget.child,
               isPlaying(it) ? widget.animation!.value : (it.shown ? 1 : 0),
               indicatorHeight: widget.indicatorHeight == IndicatorHeight.large ? 5 : 3,
               indicatorColor: widget.indicatorColor,
@@ -796,28 +808,35 @@ class StoryProgressIndicator extends StatelessWidget {
   final double indicatorHeight;
   final Color indicatorColor;
   final Color? backIndicatorColor;
+  final Widget child;
 
   StoryProgressIndicator(
     this.value, {
     this.indicatorHeight = 5,
     this.indicatorColor = Colors.white,
     this.backIndicatorColor,
+    required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size.fromHeight(
-        this.indicatorHeight,
-      ),
-      foregroundPainter: IndicatorOval(
-        this.indicatorColor.withOpacity(0.8),
-        this.value,
-      ),
-      painter: IndicatorOval(
-      backIndicatorColor ??  this.indicatorColor.withOpacity(0.4),
-        1.0,
-      ),
+    return Column(
+      children: [
+        CustomPaint(
+          size: Size.fromHeight(
+            this.indicatorHeight,
+          ),
+          foregroundPainter: IndicatorOval(
+            this.indicatorColor.withOpacity(0.8),
+            this.value,
+          ),
+          painter: IndicatorOval(
+            backIndicatorColor ?? this.indicatorColor.withOpacity(0.4),
+            1.0,
+          ),
+        ),
+        child,
+      ],
     );
   }
 }
